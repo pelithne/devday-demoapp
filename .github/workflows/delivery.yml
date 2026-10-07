@@ -50,7 +50,7 @@ jobs:
           trap 'docker logs backend; docker logs frontend; docker rm -f frontend backend; docker network rm demo' EXIT
           curl --fail --retry 15 --retry-delay 2 --retry-all-errors http://localhost:18080/healthz
           curl --fail --retry 15 --retry-delay 2 --retry-all-errors http://localhost:18080/api/state
-          curl --fail http://localhost:18080/ | grep 'What should we'
+          curl --fail http://localhost:18080/ | grep 'Dev Day Live'
           curl --fail http://localhost:18080/release.json | grep "$REVISION"
 
   publish:
