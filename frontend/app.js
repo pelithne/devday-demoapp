@@ -4,6 +4,7 @@ const feedback = document.querySelector("#feedback");
 let selectedTopic = null;
 let voterId = null;
 let submitting = false;
+let connected = false;
 
 function message(text, error = false) {
   feedback.textContent = text;
@@ -37,6 +38,9 @@ function initialiseVoter() {
 
 async function api(path, options = {}) {
   const response = await fetch(path, { ...options, signal: AbortSignal.timeout(12000) });
+  if (!response.headers.get("content-type")?.includes("application/json")) {
+    throw new Error(response.ok ? "The API returned an unexpected response." : `Request failed (${response.status}). Please try again shortly.`);
+  }
   const data = await response.json();
   if (!response.ok) throw new Error(data.error || `Request failed (${response.status}).`);
   return data;
@@ -114,7 +118,8 @@ async function refresh() {
     const state = await api("/api/state");
     render(state);
     if (voterId && !selectedTopic) message("Pick a topic to join the conversation.");
-    else if (voterId && feedback.classList.contains("error")) message("Connected again. Your voice counts.");
+    else if (voterId && (!connected || feedback.classList.contains("error"))) message("Your vote is saved. Change your pick whenever inspiration strikes.");
+    connected = true;
   } catch (error) {
     message(`Live results unavailable: ${error.message} Retrying shortly.`, true);
   } finally {
