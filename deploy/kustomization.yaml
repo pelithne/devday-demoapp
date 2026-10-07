@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: devday-demoapp
+resources:
+  - namespace.yaml
+  - storage.yaml
+  - backend.yaml
+  - frontend.yaml
+images:
+  - name: devday-frontend
+    newName: acrokzfv5l7xea3m.azurecr.io/devday-frontend
+    newTag: bootstrap
+  - name: devday-backend
+    newName: acrokzfv5l7xea3m.azurecr.io/devday-backend
+    newTag: bootstrap

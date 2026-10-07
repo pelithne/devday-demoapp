@@ -1,0 +1,119 @@
+name: Demo app CI and GitOps delivery
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'deploy/**'
+      - '**/*.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: demoapp-delivery-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Test and build containers
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Test API and image updater
+        run: |
+          python3 -m venv .venv
+          .venv/bin/pip install -r backend/requirements.txt
+          .venv/bin/python -m unittest discover -s backend -v
+          python3 -m unittest discover -s scripts -v
+          node --check frontend/app.js
+      - name: Validate bootstrap and manifests
+        run: |
+          az bicep install --version v0.48.1
+          az bicep build --file infra/github-oidc.bicep --stdout > /dev/null
+          kubectl kustomize deploy > /dev/null
+      - name: Build and smoke-test both containers
+        env:
+          REVISION: ${{ github.sha }}
+        run: |
+          docker build --build-arg RELEASE_VERSION="$REVISION" -t demo-backend backend
+          docker build --build-arg RELEASE_VERSION="$REVISION" -t demo-frontend frontend
+          docker network create demo
+          docker run --detach --name backend --network demo demo-backend
+          docker run --detach --name frontend --network demo -p 18080:8080 demo-frontend
+          trap 'docker logs backend; docker logs frontend; docker rm -f frontend backend; docker network rm demo' EXIT
+          curl --fail --retry 15 --retry-delay 2 --retry-all-errors http://localhost:18080/healthz
+          curl --fail --retry 15 --retry-delay 2 --retry-all-errors http://localhost:18080/api/state
+          curl --fail http://localhost:18080/ | grep 'What should we'
+          curl --fail http://localhost:18080/release.json | grep "$REVISION"
+
+  publish:
+    name: Publish images and update Git desired state
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: registry-build
+    permissions:
+      contents: write
+      id-token: write
+    env:
+      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      ACR_NAME: ${{ vars.ACR_NAME }}
+      REVISION: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+      - name: Check registry configuration
+        run: |
+          if [[ -z "$AZURE_CLIENT_ID" || -z "$AZURE_TENANT_ID" || -z "$AZURE_SUBSCRIPTION_ID" || -z "$ACR_NAME" ]]; then
+            echo "::error::Configure the registry-build environment variables listed in README.md."
+            exit 1
+          fi
+      - uses: azure/login@7184910d9eb2b1c5e48f7073824a90609bb9b6d6 # v2
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+      - name: Publish versioned images
+        run: |
+          az acr login --name "$ACR_NAME"
+          for component in frontend backend; do
+            image="$ACR_NAME.azurecr.io/devday-$component:$REVISION"
+            docker build --build-arg RELEASE_VERSION="$REVISION" --tag "$image" "$component"
+            docker push "$image"
+          done
+      - name: Commit image versions for Flux
+        run: |
+          git fetch origin main
+          git checkout -B main origin/main
+          if [[ "$(git log -1 --format=%H -- backend frontend)" != "$(git log -1 --format=%H "$REVISION" -- backend frontend)" ]]; then
+            echo "::error::Application source changed while images were building. Refusing to deploy a stale release; the newer workflow will publish it."
+            exit 1
+          fi
+          python3 scripts/update_images.py "$ACR_NAME.azurecr.io" "$REVISION"
+          git config user.name pelithne
+          git config user.email 45140408+pelithne@users.noreply.github.com
+          git add deploy/kustomization.yaml
+          if git diff --cached --quiet; then
+            echo "These images are already the desired state."
+          else
+            git commit -m "Release demo app $REVISION"
+            git push origin main
+          fi
+          {
+            echo '## GitOps release'
+            echo "Source revision: \`$REVISION\`"
+            echo 'Desired-state commit:'
+            git rev-parse HEAD
+            echo 'Flux now pulls the updated manifests; this workflow never accesses AKS.'
+          } >> "$GITHUB_STEP_SUMMARY"

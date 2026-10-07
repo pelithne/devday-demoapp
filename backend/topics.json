@@ -1,0 +1,6 @@
+[
+  {"id": "gitops", "name": "GitOps", "tagline": "Git is the control plane.", "color": "#8b5cf6", "symbol": "01"},
+  {"id": "kubernetes", "name": "Kubernetes", "tagline": "Small containers. Big ideas.", "color": "#38bdf8", "symbol": "02"},
+  {"id": "identity", "name": "Workload identity", "tagline": "Less secrets. More trust.", "color": "#34d399", "symbol": "03"},
+  {"id": "observability", "name": "Observability", "tagline": "Make the invisible visible.", "color": "#fb923c", "symbol": "04"}
+]

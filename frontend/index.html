@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101321">
+  <title>Dev Day Live | Pick your next deep dive</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Dev Day Live home"><span class="brand-icon">D/</span><span>dev day<span class="brand-live"> LIVE</span></span></a>
+      <span class="pill"><span class="status-dot"></span> Powered by GitOps</span>
+    </header>
+    <section class="hero">
+      <p class="eyebrow">THE ROOM HAS A VOICE</p>
+      <h1>What should we<br><span>build next?</span></h1>
+      <p class="intro">Four big ideas. One room full of opinions.<br>Pick your next cloud deep dive and watch the results come alive.</p>
+      <div class="hero-meta"><span class="avatar-stack" aria-hidden="true"><i>G</i><i>K</i><i>I</i><i>O</i></span><span><strong id="total-votes">0</strong> voices in the room</span><span class="live-label"><span class="status-dot"></span> Live results</span></div>
+    </section>
+    <section aria-label="Choose a topic">
+      <div class="section-heading"><h2>Make your pick</h2><span>You can change your vote anytime.</span></div>
+      <div class="topic-grid" id="topics" aria-busy="true"></div>
+      <p class="feedback" id="feedback" role="status" aria-live="polite">Connecting to the live vote board...</p>
+    </section>
+    <section class="results-panel" aria-labelledby="results-title">
+      <div class="section-heading"><div><p class="eyebrow">THE SIGNAL</p><h2 id="results-title">Your room, in real time.</h2></div><span class="pill small">Refreshes every 5 seconds</span></div>
+      <div id="results" class="results"></div>
+    </section>
+    <section class="delivery" aria-label="GitOps delivery pipeline">
+      <div><p class="eyebrow">A COMMIT BECOMES A RELEASE</p><h2>Git is the source of truth.</h2><p>Push a change. Build the containers. Let Flux do the rest.</p></div>
+      <div class="pipeline"><span>Git commit</span><b aria-hidden="true">&rarr;</b><span>ACR images</span><b aria-hidden="true">&rarr;</b><span>Flux sync</span><b aria-hidden="true">&rarr;</b><span class="pipeline-live">AKS live</span></div>
+    </section>
+    <footer><span>Small app. Real delivery.</span><div class="releases"><span>UI <code id="frontend-release">loading</code></span><span>API <code id="backend-release">loading</code></span><a href="https://github.com/pelithne/devday-demoapp" target="_blank" rel="noopener noreferrer">View source &nearr;</a></div></footer>
+  </main>
+</body>
+</html>
