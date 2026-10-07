@@ -6,6 +6,7 @@ resources:
   - storage.yaml
   - backend.yaml
   - frontend.yaml
+  - hello-world.yaml
 images:
   - name: devday-frontend
     newName: acrokzfv5l7xea3m.azurecr.io/devday-frontend
@@ -13,3 +14,6 @@ images:
   - name: devday-backend
     newName: acrokzfv5l7xea3m.azurecr.io/devday-backend
     newTag: d6b62b7c0073079c0c5dfd5bd0bbceb0eb408ba1
+  - name: devday-hello-world
+    newName: acrokzfv5l7xea3m.azurecr.io/devday-hello-world
+    newTag: bootstrap

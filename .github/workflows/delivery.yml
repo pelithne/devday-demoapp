@@ -33,25 +33,32 @@ jobs:
           .venv/bin/python -m unittest discover -s backend -v
           python3 -m unittest discover -s scripts -v
           node --check frontend/app.js
+          node --check hello-world/app.js
+          node --test hello-world/test_app.cjs
       - name: Validate bootstrap and manifests
         run: |
           az bicep install --version v0.48.1
           az bicep build --file infra/github-oidc.bicep --stdout > /dev/null
           kubectl kustomize deploy > /dev/null
-      - name: Build and smoke-test both containers
+      - name: Build and smoke-test all containers
         env:
           REVISION: ${{ github.sha }}
         run: |
           docker build --build-arg RELEASE_VERSION="$REVISION" -t demo-backend backend
           docker build --build-arg RELEASE_VERSION="$REVISION" -t demo-frontend frontend
+          docker build --build-arg RELEASE_VERSION="$REVISION" -t demo-hello-world hello-world
           docker network create demo
           docker run --detach --name backend --network demo demo-backend
           docker run --detach --name frontend --network demo -p 18080:8080 demo-frontend
-          trap 'docker logs backend; docker logs frontend; docker rm -f frontend backend; docker network rm demo' EXIT
+          docker run --detach --name hello-world --network demo -p 18081:8080 demo-hello-world
+          trap 'docker logs backend; docker logs frontend; docker logs hello-world; docker rm -f frontend backend hello-world; docker network rm demo' EXIT
           curl --fail --retry 15 --retry-delay 2 --retry-all-errors http://localhost:18080/healthz
           curl --fail --retry 15 --retry-delay 2 --retry-all-errors http://localhost:18080/api/state
           curl --fail http://localhost:18080/ | grep 'Dev Day Live'
           curl --fail http://localhost:18080/release.json | grep "$REVISION"
+          curl --fail --retry 15 --retry-delay 2 --retry-all-errors http://localhost:18081/healthz
+          curl --fail http://localhost:18081/ | grep 'Hello, World!'
+          curl --fail http://localhost:18081/release.json | grep "$REVISION"
 
   publish:
     name: Publish images and update Git desired state
@@ -87,7 +94,7 @@ jobs:
       - name: Publish versioned images
         run: |
           az acr login --name "$ACR_NAME"
-          for component in frontend backend; do
+          for component in frontend backend hello-world; do
             image="$ACR_NAME.azurecr.io/devday-$component:$REVISION"
             docker build --build-arg RELEASE_VERSION="$REVISION" --tag "$image" "$component"
             docker push "$image"
@@ -96,7 +103,7 @@ jobs:
         run: |
           git fetch origin main
           git checkout -B main origin/main
-          if [[ "$(git log -1 --format=%H -- backend frontend)" != "$(git log -1 --format=%H "$REVISION" -- backend frontend)" ]]; then
+          if [[ "$(git log -1 --format=%H -- backend frontend hello-world)" != "$(git log -1 --format=%H "$REVISION" -- backend frontend hello-world)" ]]; then
             echo "::error::Application source changed while images were building. Refusing to deploy a stale release; the newer workflow will publish it."
             exit 1
           fi

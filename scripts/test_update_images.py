@@ -13,12 +13,13 @@ class ImageUpdateTests(unittest.TestCase):
         source = Path(__file__).resolve().parents[1] / "deploy" / "kustomization.yaml"
         self.path.write_text(source.read_text())
 
-    def test_updates_both_images_and_is_idempotent(self):
+    def test_updates_all_three_images_and_is_idempotent(self):
         revision = "a" * 40
         update_images("test.azurecr.io", revision, self.path)
         first = self.path.read_text()
-        self.assertEqual(first.count("newTag: " + revision), 2)
-        self.assertEqual(first.count("newName: test.azurecr.io/"), 2)
+        self.assertEqual(first.count("newTag: " + revision), 3)
+        for component in ("frontend", "backend", "hello-world"):
+            self.assertEqual(first.count(f"newName: test.azurecr.io/devday-{component}\n"), 1)
         update_images("test.azurecr.io", revision, self.path)
         self.assertEqual(self.path.read_text(), first)
 
@@ -35,3 +36,19 @@ class ImageUpdateTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             update_images("test.azurecr.io", "a" * 40, self.path)
         self.assertEqual(self.path.read_text(), "images: []\n")
+
+    def test_duplicate_image_names_are_rejected_without_modification(self):
+        original = self.path.read_text().replace("/devday-hello-world", "/devday-frontend")
+        self.path.write_text(original)
+        with self.assertRaises(ValueError):
+            update_images("test.azurecr.io", "a" * 40, self.path)
+        self.assertEqual(self.path.read_text(), original)
+
+    def test_missing_image_tag_is_rejected_without_modification(self):
+        original = self.path.read_text()
+        position = original.rfind("    newTag:")
+        original = original[:position]
+        self.path.write_text(original)
+        with self.assertRaises(ValueError):
+            update_images("test.azurecr.io", "a" * 40, self.path)
+        self.assertEqual(self.path.read_text(), original)

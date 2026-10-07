@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f5ef">
+  <title>Hello, World! | Dev Day</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%237c3aed'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-size='40'%3E%F0%9F%91%8B%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <a class="brand" href="/" aria-label="Dev Day Hello World home"><span class="brand-mark">d/</span> dev day <span class="brand-caption">tiny experiments</span></a>
+      <span class="gitops-pill"><span class="dot"></span> Delivered by GitOps</span>
+    </header>
+    <section class="hello-card" aria-labelledby="greeting">
+      <div class="grid-paper" aria-hidden="true"></div>
+      <span class="sticker sticker-top" aria-hidden="true">a small start<br>a big adventure</span>
+      <span class="spark spark-one" aria-hidden="true">&#10022;</span>
+      <span class="spark spark-two" aria-hidden="true">&#10022;</span>
+      <p class="eyebrow"><span></span> ONE VERY FRIENDLY CONTAINER</p>
+      <h1 id="greeting">hello,<br><span>world.</span><i aria-hidden="true">&#128075;</i></h1>
+      <p class="intro">Every great thing starts with a little hello.<br>This one travelled from Git, through the clouds, to you.</p>
+      <div class="actions">
+        <button id="say-hello" type="button">Send a little hello <span aria-hidden="true">&#8599;</span></button>
+        <button id="remix" class="secondary" type="button">Remix the colours <span aria-hidden="true">&#10023;</span></button>
+      </div>
+      <p id="hello-status" class="hello-status" role="status" aria-live="polite">No sign-up. No database. Just good vibes.</p>
+      <div class="planet" aria-hidden="true">
+        <svg viewBox="0 0 160 160" fill="none">
+          <circle cx="80" cy="80" r="68" fill="#c4f0cf" stroke="#283b34" stroke-width="3"/>
+          <ellipse cx="80" cy="80" rx="32" ry="68" stroke="#283b34" stroke-width="2"/>
+          <ellipse cx="80" cy="80" rx="68" ry="24" stroke="#283b34" stroke-width="2"/>
+          <path d="M17 55h126M17 105h126M80 12v136" stroke="#283b34" stroke-width="2"/>
+          <circle cx="65" cy="73" r="5" fill="#283b34"/><circle cx="95" cy="73" r="5" fill="#283b34"/>
+          <path d="M66 89q14 16 28 0" stroke="#283b34" stroke-width="4" stroke-linecap="round"/>
+          <ellipse cx="57" cy="84" rx="8" ry="4" fill="#f7b1bc"/><ellipse cx="103" cy="84" rx="8" ry="4" fill="#f7b1bc"/>
+        </svg>
+        <span class="planet-label">you are here. hi!</span>
+      </div>
+      <span class="sticker sticker-bottom" aria-hidden="true">100%<br>hello energy</span>
+      <div id="confetti" aria-hidden="true"></div>
+    </section>
+    <section class="journey" aria-label="How this page got here">
+      <p>A tiny page. A real delivery pipeline.</p>
+      <div><span><b>01</b> Commit</span><i aria-hidden="true">&#8594;</i><span><b>02</b> Container</span><i aria-hidden="true">&#8594;</i><span><b>03</b> Flux</span><i aria-hidden="true">&#8594;</i><span><b>04</b> Hello!</span></div>
+    </section>
+    <footer>
+      <span>Made of HTML, CSS, and a little optimism.</span>
+      <div><span class="release-label">Release <code id="release">loading</code></span><a href="https://github.com/pelithne/devday-demoapp" target="_blank" rel="noopener noreferrer">Peek at the source &#8599;</a></div>
+    </footer>
+  </main>
+</body>
+</html>
