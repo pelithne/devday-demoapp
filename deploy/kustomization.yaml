@@ -9,7 +9,7 @@ resources:
 images:
   - name: devday-frontend
     newName: acrokzfv5l7xea3m.azurecr.io/devday-frontend
-    newTag: c315ab77d1f8ce363ec864a287809d4da43d81bf
+    newTag: d275b0c13df64420158d32447dd7a1895ca5771a
   - name: devday-backend
     newName: acrokzfv5l7xea3m.azurecr.io/devday-backend
-    newTag: c315ab77d1f8ce363ec864a287809d4da43d81bf
+    newTag: d275b0c13df64420158d32447dd7a1895ca5771a
