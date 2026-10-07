@@ -3,7 +3,7 @@
 Two applications deployed to AKS through the same Flux GitOps source:
 
 - **Dev Day Live:** a colourful, responsive voting board. Pick GitOps, Kubernetes, workload identity, or observability and watch the room's results update live.
-- **Hello, World!:** a stateless webpage with a waving hello, a smiling globe, confetti, and remixable colours. No backend or database.
+- **Hello, World!:** a stateless webpage with a waving hello, a smiling globe, and remixable colours. No backend or database.
 
 ## Architecture
 
@@ -25,7 +25,7 @@ GitHub commit --> Actions tests + container builds --> ACR
 - One Flask/Gunicorn backend stores anonymous votes in SQLite on a 4-GiB Azure Disk PVC. `Recreate` deployment strategy prevents overlapping backend pods sharing the single-writer disk; expect a brief voting outage on backend updates.
 - A random browser-local UUID identifies a vote. Repeated voting updates that browser's choice rather than adding votes. No names, messages, or personal profiles are stored. This is a demo, not an authenticated or abuse-resistant voting system: clearing browser storage can create a new voter.
 - UI and API commit versions are visible in the footer. Results refresh every five seconds.
-- The Hello World app has two Nginx replicas and its own public Service. The hello counter and colour choice exist only in browser memory and reset on reload.
+- The Hello World app has two Nginx replicas and its own public Service. The colour choice exists only in browser memory and resets on reload.
 - ACR is in Sweden Central, AKS in North Europe. All workloads target the user node pool.
 - Containers run non-root, with read-only root filesystems and bounded resource requests/limits.
 
@@ -92,7 +92,7 @@ Find the second page's address:
 kubectl get service hello-world -n devday-demoapp
 ```
 
-Browse to `http://<EXTERNAL-IP>`. Try **Send a little hello** and **Remix the colours**. Animations respect the browser's reduced-motion setting.
+Browse to `http://<EXTERNAL-IP>`. Try **Remix the colours**. Animations respect the browser's reduced-motion setting.
 
 Change the greeting in [hello-world/index.html](./hello-world/index.html) or its styles in [hello-world/styles.css](./hello-world/styles.css), then push to `main`. Actions builds the images and updates Git; Flux rolls out the page automatically. The release badge shows the source commit.
 

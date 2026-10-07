@@ -28,10 +28,6 @@ button.secondary { border-color: var(--border); color: var(--ink); background: #
 .hello-status { min-height: 20px; font-size: 11px; color: var(--muted); margin: 18px 0 0; }
 .planet { position: absolute; right: 62px; top: 220px; width: 196px; transform: rotate(10deg); animation: float 6s ease-in-out infinite; }
 .planet svg { display: block; width: 100%; filter: drop-shadow(6px 8px 0 #283b3410); }
-.planet-label { display: block; font-size: 11px; text-align: center; margin-top: 9px; font-weight: 650; }
-.sticker { position: absolute; text-align: center; font-size: 11px; font-weight: 750; line-height: 1.45; padding: 14px 17px; }
-.sticker-top { top: 50px; right: 54px; background: #ffe89c; border: 1px solid #e8cf7b; transform: rotate(8deg); box-shadow: 3px 5px 0 #2824370b; }
-.sticker-bottom { right: 68px; bottom: 46px; width: 98px; height: 98px; border-radius: 50%; background: var(--accent-light); color: var(--accent); display: grid; place-content: center; transform: rotate(-12deg); border: 1px dashed var(--accent); }
 .spark { position: absolute; color: var(--accent); }
 .spark-one { font-size: 44px; right: 294px; top: 143px; transform: rotate(14deg); }
 .spark-two { font-size: 28px; right: 37px; top: 360px; }
@@ -44,12 +40,9 @@ footer { border-top: 1px solid var(--border); padding: 22px 0 32px; display: fle
 footer > div { display: flex; gap: 22px; flex-wrap: wrap; }
 code { font-size: 10px; background: var(--accent-light); color: var(--accent); padding: 3px 6px; border-radius: 5px; }
 footer a { color: var(--ink); font-weight: 600; }
-#confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.confetti-piece { position: absolute; left: 32%; top: 62%; width: 9px; height: 13px; border-radius: 3px; background: var(--confetti-color); animation: celebrate 1.8s ease-out forwards; }
 @keyframes wave { 0%, 60%, 100% { transform: rotate(0); } 70% { transform: rotate(16deg); } 80% { transform: rotate(-6deg); } 90% { transform: rotate(12deg); } }
 @keyframes float { 0%, 100% { transform: translateY(0) rotate(10deg); } 50% { transform: translateY(-10px) rotate(6deg); } }
-@keyframes celebrate { from { transform: translate(0, 0) rotate(0); opacity: 1; } to { transform: translate(var(--dx), var(--dy)) rotate(var(--rotation)); opacity: 0; } }
-@media (max-width: 950px) { .hello-card { padding: 44px; min-height: 590px; } .planet { right: 35px; width: 160px; top: 230px; } .spark-one { right: 220px; } .sticker-top { right: 35px; } .sticker-bottom { right: 45px; } }
-@media (max-width: 720px) { .page { padding: 0 20px; } header { padding: 24px 0; } .brand-caption { display: none; } .hello-card { padding: 36px 28px 165px; min-height: auto; } h1 { letter-spacing: -5px; font-size: 88px; } h1 > i { right: -58px; top: 20px; font-size: 37px; } .planet { width: 112px; right: 28px; top: auto; bottom: 28px; } .sticker-top { display: none; } .sticker-bottom { left: 30px; right: auto; bottom: 32px; width: 82px; height: 82px; font-size: 10px; } .spark-one { right: 22px; top: 200px; font-size: 25px; } .spark-two { display: none; } .journey { align-items: flex-start; flex-direction: column; padding: 25px 0; gap: 15px; } footer { flex-direction: column; } }
+@media (max-width: 950px) { .hello-card { padding: 44px; min-height: 590px; } .planet { right: 35px; width: 160px; top: 230px; } .spark-one { right: 220px; } }
+@media (max-width: 720px) { .page { padding: 0 20px; } header { padding: 24px 0; } .brand-caption { display: none; } .hello-card { padding: 36px 28px 165px; min-height: auto; } h1 { letter-spacing: -5px; font-size: 88px; } h1 > i { right: -58px; top: 20px; font-size: 37px; } .planet { width: 112px; right: 28px; top: auto; bottom: 28px; } .spark-one { right: 22px; top: 200px; font-size: 25px; } .spark-two { display: none; } .journey { align-items: flex-start; flex-direction: column; padding: 25px 0; gap: 15px; } footer { flex-direction: column; } }
 @media (max-width: 380px) { .page { padding: 0 14px; } .gitops-pill { font-size: 9px; padding: 7px 9px; } .brand { font-size: 17px; } .hello-card { padding-left: 23px; padding-right: 23px; } h1 { font-size: 75px; } h1 > i { font-size: 29px; right: -44px; } .eyebrow { font-size: 8px; letter-spacing: 1.5px; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
